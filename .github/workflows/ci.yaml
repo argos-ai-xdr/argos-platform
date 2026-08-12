@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  iac-ci:
+    uses: argos-ai-xdr/argos-control/.github/workflows/reusable-iac-ci.yaml@main
+    with:
+      opentofu-directory: "opentofu"
+      kustomize-directory: "kustomize"
+      helm-directory: "helm"
+
+  # Los siguientes jobs se activan cuando exista el Dockerfile correspondiente
+  # (a partir de ARG-002: pipeline SBOM, firma, scan de licencia y policy de imágenes).
+  #
+  # build-registry-image:
+  #   needs: iac-ci
+  #   uses: argos-ai-xdr/argos-control/.github/workflows/reusable-container-build.yaml@main
+  #   with:
+  #     image-name: registry-init
+  #     context: platform/registry
+  #     registry: ${{ vars.ARGOS_REGISTRY }}
+  #   secrets:
+  #     registry-username: ${{ secrets.REGISTRY_USERNAME }}
+  #     registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+  #
+  # sbom-and-sign:
+  #   needs: build-registry-image
+  #   uses: argos-ai-xdr/argos-control/.github/workflows/reusable-sbom-sign.yaml@main
+  #   with:
+  #     image-ref: ${{ needs.build-registry-image.outputs.image-digest }}
+  #   secrets:
+  #     registry-username: ${{ secrets.REGISTRY_USERNAME }}
+  #     registry-password: ${{ secrets.REGISTRY_PASSWORD }}

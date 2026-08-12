@@ -1,0 +1,10 @@
+apiVersion: v2
+name: argos-platform
+description: >-
+  Chart paraguas de plataforma (cluster add-ons): Gatekeeper, cert-manager,
+  y cualquier componente transversal a todos los namespaces. Los servicios
+  de plataforma con estado (NATS, Keycloak, OpenSearch, ...) están en
+  ../argos-services/, no aquí.
+type: application
+version: 0.1.0
+appVersion: "0.1.0-dev"

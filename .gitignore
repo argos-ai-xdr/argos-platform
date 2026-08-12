@@ -1,0 +1,36 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# OpenTofu
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+
+# Python (validators)
+__pycache__/
+*.pyc
+.venv/
+.mypy_cache/
+.pytest_cache/
+
+# Node
+node_modules/
+
+# Secrets and local overrides — never commit
+.env
+.env.*
+*.local.yaml
+secrets/
+kubeconfig*
+
+# Evidencia/datasets reales — deben vivir en Ceph RGW / OCI artifacts, no en Git (ADR-016)
+evidence/
+reports/generated/

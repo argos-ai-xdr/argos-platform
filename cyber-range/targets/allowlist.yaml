@@ -1,0 +1,27 @@
+# Allowlist cerrada del cyber-range (argos-cyber-range). Todo destino no
+# incluido aquí debe producir DENY — ver
+# argos-control/architecture/trust-zones/trust-zones.md y ADR-011 (L3, sin
+# ejecución autónoma de alto impacto).
+#
+# Cambiar este archivo es un cambio de seguridad: requiere revisión de
+# qa-security-observer (ver ../../CODEOWNERS) y, si amplía el alcance,
+# actualizar también validation/checklist.md.
+
+version: 1
+namespace: argos-cyber-range
+
+approved_repositories:
+  - name: "TODO: repos de paquetes/imágenes necesarios para los targets del escenario"
+    url: "TODO"
+
+sinkhole_endpoints:
+  - name: "TODO: endpoint sinkhole para simular exfiltración/C2 controlado"
+    address: "TODO"
+
+targets:
+  # Cada target del escenario ARGOS-CYB-01 (ARG-011/012/013) se declara aquí
+  # antes de poder usarse en un dry-run o ejecución.
+  - id: "TODO"
+    description: "TODO"
+    namespace: argos-cyber-range
+    labels: {}

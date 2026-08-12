@@ -1,0 +1,7 @@
+# Overlay para el escenario ARGOS-CYB-01 (S8, Acceptance Gate): superpone
+# sobre laboratory los datos/flags necesarios para la demo final, sin duplicar
+# la base. Añadir aquí patches específicos de demo cuando ARG-028 los defina.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../laboratory

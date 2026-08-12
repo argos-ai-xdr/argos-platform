@@ -1,0 +1,28 @@
+apiVersion: v2
+name: argos-services
+description: >-
+  Chart paraguas de los servicios de plataforma con estado (NATS, Keycloak,
+  SPIRE, OpenBao, OpenSearch, Ceph RGW, Wazuh, MISP, registry). Cada
+  dependencia se activa vía values.yaml cuando el owner del componente
+  confirma versión/digest (ver ../../platform/<servicio>/README.md).
+type: application
+version: 0.1.0
+appVersion: "0.1.0-dev"
+dependencies:
+  # TODO: fijar `version` real de cada chart antes de `helm dependency update`.
+  # Repos oficiales de referencia (a confirmar en ARG-002/ARG-003):
+  - name: nats
+    version: "TODO"
+    repository: "https://nats-io.github.io/k8s/helm/charts/"
+    condition: nats.enabled
+  - name: keycloak
+    version: "TODO"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: keycloak.enabled
+  - name: opensearch
+    version: "TODO"
+    repository: "https://opensearch-project.github.io/helm-charts/"
+    condition: opensearch.enabled
+  # SPIRE, OpenBao, Wazuh, MISP, Ceph RGW y el registry no siempre tienen un
+  # chart upstream estable — ver platform/<servicio>/README.md para la
+  # decisión de instalación (chart oficial vs. manifests propios en kustomize/).

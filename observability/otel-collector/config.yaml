@@ -1,0 +1,39 @@
+# Skeleton de OpenTelemetry Collector (ADR-009). Correlación transversal por
+# run_id/trace_id — NUNCA reenviar chain-of-thought del modelo (ver ADR-016).
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch: {}
+  # Redacta cualquier atributo que pueda contener chain-of-thought o secretos
+  # antes de exportar (ADR-016). Completar la lista de attribute keys en ARG-015.
+  attributes/redact:
+    actions:
+      - key: llm.chain_of_thought
+        action: delete
+      - key: authorization
+        action: delete
+
+exporters:
+  prometheus:
+    endpoint: 0.0.0.0:8889
+  otlp/opensearch:
+    endpoint: "TODO: endpoint del ingest de OpenSearch (../opensearch/)"
+    tls:
+      insecure: false
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch, attributes/redact]
+      exporters: [otlp/opensearch]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus]

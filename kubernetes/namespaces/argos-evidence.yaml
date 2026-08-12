@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argos-evidence
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+    argos.io/plane: p6-evidencia-plataforma
+  annotations:
+    argos.io/description: >-
+      OpenSearch + Ceph RGW. WORM lógico; el agente no tiene permisos de
+      escritura ni modificación sobre evidencia ya escrita (ADR-006, ADR-016).

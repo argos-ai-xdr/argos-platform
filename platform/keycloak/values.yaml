@@ -1,0 +1,8 @@
+keycloak:
+  enabled: false
+  auth:
+    adminUser: "TODO" # nunca hardcodear el password aquí; usar OpenBao/secret externo
+  realm: argos-ai-xdr
+  mfa:
+    requiredForRoles:
+      - soc-approver

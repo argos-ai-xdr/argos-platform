@@ -1,0 +1,29 @@
+# Genera un Application por entorno a partir de kustomize/overlays/<entorno>/.
+# Añadir un entorno nuevo = añadir un elemento a la lista, no tocar código.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: argos-platform-baseline
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - environment: local
+          - environment: laboratory
+          # - environment: demo   # activar cuando exista kustomize/overlays/demo con datos de demo
+  template:
+    metadata:
+      name: "argos-platform-baseline-{{environment}}"
+    spec:
+      project: argos-ai-xdr
+      source:
+        repoURL: "https://github.com/argos-ai-xdr/argos-platform.git"
+        targetRevision: main
+        path: "kustomize/overlays/{{environment}}"
+      destination:
+        server: "https://kubernetes.default.svc"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

@@ -1,0 +1,16 @@
+# Requiere sigstore policy-controller instalado (o Gatekeeper con el provider
+# de verificación de imágenes). Rechaza cualquier imagen que no esté firmada
+# por un workflow de GitHub Actions de la organización argos-ai-xdr — misma
+# identidad que verifica reusable-sbom-sign.yaml en CI (ADR-013).
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: argos-ai-xdr-signed-images
+spec:
+  images:
+    - glob: "**/argos/**"
+  authorities:
+    - keyless:
+        identities:
+          - issuer: "https://token.actions.githubusercontent.com"
+            subjectRegExp: "^https://github.com/argos-ai-xdr/"

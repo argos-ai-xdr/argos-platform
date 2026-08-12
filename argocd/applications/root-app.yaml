@@ -1,0 +1,22 @@
+# App-of-apps: este es el único Application aplicado manualmente (una vez, al
+# bootstrap del clúster). Todo lo demás se sincroniza a partir de aquí.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argos-root
+  namespace: argocd
+spec:
+  project: argos-ai-xdr
+  source:
+    repoURL: "https://github.com/argos-ai-xdr/argos-platform.git"
+    targetRevision: main
+    path: argocd/application-sets
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false

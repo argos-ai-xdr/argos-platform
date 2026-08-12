@@ -1,0 +1,26 @@
+# Alertas de salud de plataforma (no de los criterios AC01-AC14, que evalúa
+# argos-validation). Ampliar cuando ARG-003/ARG-015 expongan métricas propias.
+groups:
+  - name: argos-platform-health
+    rules:
+      - alert: PodCrashLooping
+        expr: increase(kube_pod_container_status_restarts_total[15m]) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Pod en crash loop en {{ $labels.namespace }}/{{ $labels.pod }}"
+
+      - alert: CyberRangeEgressDenied
+        expr: increase(cilium_policy_verdict_total{namespace="argos-cyber-range", verdict="denied"}[5m]) > 0
+        labels:
+          severity: info
+        annotations:
+          summary: >-
+            Egress denegado en argos-cyber-range (default-deny funcionando
+            como se espera; solo investigar si el volumen es anómalo)
+
+      # TODO (ARG-003): añadir una regla que dispare en "allowed" fuera de la
+      # allowlist versionada de cyber-range/targets/ una vez Cilium/Hubble
+      # exponga esa métrica — esa es la alerta crítica real (fuga de egress),
+      # no la que había aquí antes (una expresión que no medía nada).

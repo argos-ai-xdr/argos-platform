@@ -1,0 +1,24 @@
+# Copiar y renombrar por servicio. No ampliar resources/verbs sin justificación.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: "{{SERVICE_NAME}}-role"
+  namespace: "{{NAMESPACE}}"
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: "{{SERVICE_NAME}}-binding"
+  namespace: "{{NAMESPACE}}"
+subjects:
+  - kind: ServiceAccount
+    name: "{{SERVICE_NAME}}"
+    namespace: "{{NAMESPACE}}"
+roleRef:
+  kind: Role
+  name: "{{SERVICE_NAME}}-role"
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,15 @@
+# Usa el ConstraintTemplate de policies/gatekeeper/. Todo namespace nuevo debe
+# declarar a qué plano pertenece (P1-P6) y su Pod Security Standard.
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: ArgosRequiredLabels
+metadata:
+  name: namespace-baseline
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Namespace"]
+  parameters:
+    labels:
+      - "pod-security.kubernetes.io/enforce"
+      - "argos.io/plane"

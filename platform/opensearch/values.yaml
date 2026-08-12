@@ -1,0 +1,7 @@
+opensearch:
+  enabled: false
+  replicas: 1 # TODO: HA real en osc
+  persistence:
+    size: "TODO"
+  retention:
+    policy: "TODO — definir junto a ADR-016 (evidencia fuera de Git) y AC14"

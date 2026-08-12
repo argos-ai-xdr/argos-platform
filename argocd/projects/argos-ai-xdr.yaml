@@ -1,0 +1,27 @@
+# AppProject: acota qué puede desplegar Argo CD y desde dónde (ADR-015: GitOps
+# como único mecanismo de despliegue contra laboratory/osc).
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: argos-ai-xdr
+  namespace: argocd
+spec:
+  description: "Plataforma ARGOS AI-XDR"
+  sourceRepos:
+    - "https://github.com/argos-ai-xdr/argos-platform.git"
+  destinations:
+    - namespace: "argos-*"
+      server: "https://kubernetes.default.svc"
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  roles:
+    - name: platform-sre
+      description: "Rol platform-sre (ver argos-control/governance/raci/raci.md)"
+      policies:
+        - "p, proj:argos-ai-xdr:platform-sre, applications, sync, argos-ai-xdr/*, allow"
+      groups:
+        - "argos-ai-xdr:platform-sre"

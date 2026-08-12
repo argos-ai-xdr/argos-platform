@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../kubernetes/namespaces
+  - ../../policies/gatekeeper/constrainttemplate-required-labels.yaml
+  - ../../policies/namespace-baseline/require-plane-and-pss-labels.yaml
+
+# TODO (ARG-003): multiplicar kubernetes/network-policies/default-deny.yaml y
+# kubernetes/quotas/default-quota.yaml por cada namespace (vía Kustomize
+# Components o un generator dedicado) en lugar de mantenerlos como plantilla
+# suelta. Documentado aquí para no perder el pendiente.

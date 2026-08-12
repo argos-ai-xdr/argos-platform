@@ -1,0 +1,17 @@
+# Cada bloque empieza deshabilitado. Los valores reales viven en
+# ../../platform/<servicio>/values.yaml y se fusionan aquí vía
+# `helm upgrade -f ../../platform/nats/values.yaml ...` (o el equivalente
+# declarado en el Application/ApplicationSet de ../../argocd/).
+
+nats:
+  enabled: false
+
+keycloak:
+  enabled: false
+
+opensearch:
+  enabled: false
+
+# spire, openbao, wazuh, misp, ceph-rgw y registry no son dependencias Helm
+# de este chart (ver Chart.yaml): su instalación se documenta y versiona en
+# ../../platform/<servicio>/ y se aplica vía kustomize/ArgoCD.

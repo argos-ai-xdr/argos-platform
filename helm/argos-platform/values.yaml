@@ -1,0 +1,10 @@
+# Toggles de add-ons transversales. Todos empiezan deshabilitados: se activan
+# a medida que ARG-002/ARG-003 los incorporen y se fije su versión/digest.
+gatekeeper:
+  enabled: false # TODO ARG-002: fijar versión al incorporar
+
+certManager:
+  enabled: false # TODO DEP-02: necesario para DNS/certs reales de osc
+
+imagePolicyController:
+  enabled: false # TODO ARG-002: sigstore policy-controller, ver ../../policies/image-verification/

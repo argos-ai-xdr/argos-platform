@@ -1,0 +1,11 @@
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus.argos-observability.svc:9090
+    isDefault: true
+  - name: OpenSearch
+    type: grafana-opensearch-datasource
+    access: proxy
+    url: "TODO: endpoint de ../../platform/opensearch/"

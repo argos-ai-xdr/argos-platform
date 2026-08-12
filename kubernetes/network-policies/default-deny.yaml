@@ -1,0 +1,31 @@
+# Aplicar en cada namespace de kubernetes/namespaces/ vía kustomize (ver kustomization.yaml
+# de cada overlay). "Todo destino no incluido debe producir DENY" — ver
+# argos-control/architecture/trust-zones/trust-zones.md.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+# Excepción mínima común: resolución DNS. Cualquier otra excepción se declara
+# explícitamente por servicio (ver kubernetes/network-policies/README.md).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53

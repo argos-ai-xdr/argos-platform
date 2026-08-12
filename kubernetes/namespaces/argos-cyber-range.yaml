@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argos-cyber-range
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+    argos.io/plane: p4-soar-enforcement
+    argos.io/isolation: maximum
+  annotations:
+    argos.io/description: >-
+      Cyber-range aislado; egress denegado salvo repositorios y endpoints
+      sinkhole aprobados (allowlist cerrada, ver ../../cyber-range/targets/ y
+      argos-control/architecture/trust-zones/trust-zones.md). ARG-003.

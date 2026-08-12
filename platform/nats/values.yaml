@@ -1,0 +1,11 @@
+# Fusionar con ../../helm/argos-services/values.yaml (nats.enabled: true) cuando
+# se confirme versión/digest (ARG-001/003). TODO: no usar en producción tal cual.
+nats:
+  enabled: false
+  jetstream:
+    enabled: true
+    fileStorage:
+      enabled: true
+      size: "TODO"
+  tls:
+    enabled: true # ver ../spire/ para identidad de workload
