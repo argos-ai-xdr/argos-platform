@@ -16,8 +16,14 @@ echo "KILL SWITCH: argos-cyber-range — motivo: ${REASON}"
 
 # 1. Elimina toda NetworkPolicy salvo default-deny-all (revoca cualquier
 #    excepción de allowlist activa).
+#    "grep -v ... || true": bajo set -o pipefail, si NO hay ninguna
+#    excepción activa (el estado normal: solo existe default-deny-all),
+#    grep no encuentra coincidencias y sale con status 1 — eso abortaba
+#    todo el script en set -e, ANTES de llegar al paso 2 (escalar a cero).
+#    Un kill switch que no llega a su propio paso de contención en el caso
+#    más común es el peor momento posible para fallar en silencio.
 kubectl get networkpolicy -n "$NAMESPACE" -o name \
-  | grep -v "networkpolicy.networking.k8s.io/default-deny-all" \
+  | { grep -v "networkpolicy.networking.k8s.io/default-deny-all" || true; } \
   | xargs -r kubectl delete -n "$NAMESPACE"
 
 # 2. Escala a cero todos los Deployments del namespace (scale-to-zero,
