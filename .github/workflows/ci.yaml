@@ -31,7 +31,11 @@ jobs:
   #   needs: build-registry-image
   #   uses: argos-ai-xdr/argos-control/.github/workflows/reusable-sbom-sign.yaml@main
   #   with:
-  #     image-ref: ${{ needs.build-registry-image.outputs.image-digest }}
+  #     # outputs.image-digest es solo el digest (sha256:...), no la referencia
+  #     # completa que pide reusable-sbom-sign.yaml — hay que componerla con
+  #     # el mismo registry/nombre que build-registry-image usó para el push.
+  #     image-ref: "${{ vars.ARGOS_REGISTRY }}/argos/registry-init@${{ needs.build-registry-image.outputs.image-digest }}"
+  #     registry: ${{ vars.ARGOS_REGISTRY }}
   #   secrets:
   #     registry-username: ${{ secrets.REGISTRY_USERNAME }}
   #     registry-password: ${{ secrets.REGISTRY_PASSWORD }}
