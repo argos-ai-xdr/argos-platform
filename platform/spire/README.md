@@ -1,7 +1,7 @@
 # SPIFFE/SPIRE
 
 * **Decisión**: ADR-004 — identidad de **workload** (mTLS entre servicios). Complementa a Keycloak (usuarios) y OpenBao (secretos cortos).
-* **Namespace**: server en `argos-observability` (ADR-018 — sin namespace dedicado nuevo, conjunto de 10 namespaces sin ampliar); agente como DaemonSet en cada nodo.
+* **Namespace**: server en `argos-observability` (ADR-052 — sin namespace dedicado nuevo, conjunto de 10 namespaces sin ampliar); agente como DaemonSet en cada nodo.
 * **Instalación**: no tiene chart umbrella en `../../helm/argos-services/` (proyecto SPIFFE mantiene su propio chart `spiffe/spire` — evaluar en ARG-003 si se consume tal cual o se ajusta vía `../../kustomize/`).
 
 ## Qué identifica
