@@ -1,7 +1,7 @@
 # OpenBao
 
 * **Decisión**: ADR-004 — secretos de **corta duración** (tokens, credenciales de conectores). No sustituye a Keycloak (usuarios) ni a SPIRE (workloads).
-* **Namespace**: dedicado, `argos-secrets` (a confirmar en S1) o `argos-observability`; acceso vía Kubernetes auth method ligado a las ServiceAccounts de `../../kubernetes/service-accounts/`.
+* **Namespace**: `argos-observability` (ADR-018 — sin namespace `argos-secrets` dedicado, conjunto de 10 namespaces sin ampliar); acceso vía Kubernetes auth method ligado a las ServiceAccounts de `../../kubernetes/service-accounts/`.
 * **Instalación**: no tiene chart umbrella en `../../helm/argos-services/` (proyecto OpenBao mantiene su propio chart — evaluar versión en ARG-002/003).
 
 ## Regla
