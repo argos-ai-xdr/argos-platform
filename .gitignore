@@ -28,7 +28,7 @@ node_modules/
 .env
 .env.*
 *.local.yaml
-secrets/
+/secrets/
 kubeconfig*
 
 # Evidencia/datasets reales — deben vivir en Ceph RGW / OCI artifacts, no
