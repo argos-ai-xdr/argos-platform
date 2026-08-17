@@ -31,6 +31,11 @@ node_modules/
 secrets/
 kubeconfig*
 
-# Evidencia/datasets reales — deben vivir en Ceph RGW / OCI artifacts, no en Git (ADR-016)
-evidence/
+# Evidencia/datasets reales — deben vivir en Ceph RGW / OCI artifacts, no
+# en Git (ADR-016). Anclado a la raíz (/evidence/): sin la barra inicial
+# coincidiría con cualquier directorio "evidence" del árbol, no solo el
+# de nivel superior — mismo bug real encontrado y corregido en
+# argos-validation (harness/evidence/manifest.py nunca se había
+# versionado) y argos-control (templates/evidence/).
+/evidence/
 reports/generated/
