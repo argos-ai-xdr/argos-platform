@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argos-kafka
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+    argos.io/plane: detection-engineering
+  annotations:
+    argos.io/description: >-
+      Bus Kafka del Detection Engineering Loop (ADR-069) -- PARALELO a
+      NATS JetStream (ADR-002), nunca lo sustituye. Namespace propio,
+      separado de argos-xdr (Wazuh) y argos-ai (Investigator/
+      rule_engineering) -- el productor Wazuh->Kafka y los consumidores
+      cruzan namespace, nunca comparten uno con el clúster Kafka en sí.

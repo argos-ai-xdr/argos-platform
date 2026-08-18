@@ -1,0 +1,54 @@
+# Alcance de lectura/escritura por topic. NOTA TÉCNICA (para no afirmar
+# algo incorrecto): esto NO es RBAC de Kubernetes -- un Role/RoleBinding
+# de k8s no restringe qué topics de Kafka puede leer/escribir un
+# cliente, eso es un concepto propio de Kafka (ACLs). Expresado aquí
+# como recursos KafkaUser de Strimzi (candidato de operador, TODO en
+# README.md) -- si se elige un operador distinto, este archivo debe
+# reescribirse con su mecanismo real de ACLs, no reinterpretarse como
+# si ya aplicara. ADR-069.
+
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: wazuh-kafka-producer
+  namespace: argos-kafka
+  labels:
+    strimzi.io/cluster: argos-kafka-cluster  # nombre de clúster TODO, sin fijar
+spec:
+  authentication:
+    type: tls
+  authorization:
+    type: simple
+    acls:
+      - resource: {type: topic, name: wazuh.events.v1, patternType: literal}
+        operations: [Write, Describe]
+      - resource: {type: topic, name: wazuh.alerts.v1, patternType: literal}
+        operations: [Write, Describe]
+      # Deny-by-default implícito: SIN entrada de ACL para ningún otro
+      # topic (argos.rule.*, argos.soc.*) -- el productor Wazuh nunca
+      # escribe fuera de wazuh.*.
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: argos-investigator
+  namespace: argos-kafka
+  labels:
+    strimzi.io/cluster: argos-kafka-cluster
+spec:
+  authentication:
+    type: tls
+  authorization:
+    type: simple
+    acls:
+      - resource: {type: topic, name: wazuh.events.v1, patternType: literal}
+        operations: [Read, Describe]
+      - resource: {type: topic, name: wazuh.alerts.v1, patternType: literal}
+        operations: [Read, Describe]
+      - resource: {type: topic, name: argos.investigation.trigger.v1, patternType: literal}
+        operations: [Read, Describe]
+      - resource: {type: topic, name: argos.investigation.result.v1, patternType: literal}
+        operations: [Write, Describe]
+      # Solo lectura de wazuh.*/trigger, solo escritura de su propio
+      # topic de resultado -- nunca Write sobre wazuh.* ni sobre
+      # argos.rule.*/argos.soc.* (esos son de rule_engineering/SmartOps).

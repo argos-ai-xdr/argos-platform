@@ -1,0 +1,66 @@
+# Topics del Detection Engineering Loop (ADR-069). partition_key
+# preferente: correlation_key (conecta con
+# argos-core/services/correlator.dedupe_by_correlation_key -- mismos
+# 50 eventos Falco de subproceso caen en la MISMA partición, así que un
+# único consumer los procesa en orden). Subsidiaria: asset_id, luego
+# incident_id.
+
+schema_version: 1
+adr_ref: ADR-069
+
+topics:
+  - name: wazuh.events.v1
+    description: "archives.json de Wazuh (todo evento, dispare o no una alerta) -- opt-in, ver logall_json en la documentación de Wazuh"
+    partition_key: [correlation_key, asset_id]
+    producer: wazuh-kafka-producer
+    consumers: [argos-investigator]
+    retention_days: 30
+
+  - name: wazuh.alerts.v1
+    description: "alerts.json de Wazuh -- eventos que dispararon una regla"
+    partition_key: [correlation_key, asset_id]
+    producer: wazuh-kafka-producer
+    consumers: [argos-investigator]
+    retention_days: 90
+
+  - name: argos.investigation.trigger.v1
+    description: "WeakSignal v1 que dispara una GlobalInvestigationRequest"
+    partition_key: [correlation_key, asset_id]
+    producer: argos-core-correlator
+    consumers: [argos-investigator]
+    retention_days: 30
+
+  - name: argos.investigation.result.v1
+    description: "ThreatAssessment v1 resultado de una investigación"
+    partition_key: [incident_id, asset_id]
+    producer: argos-investigator
+    consumers: [argos-smartops, argos-knowledge]
+    retention_days: 365
+
+  - name: argos.rule.candidate.v1
+    description: "WazuhRuleSpec v1 propuesto -- nunca XML, ver ADR-069 AI_DIRECT_RULE_DEPLOYMENT=DENY"
+    partition_key: [incident_id]
+    producer: argos-rule-engineering
+    consumers: [argos-smartops]
+    retention_days: 365
+
+  - name: argos.soc.decision.v1
+    description: "SOCDecision v1 sobre un ThreatAssessment o WazuhRuleSpec"
+    partition_key: [incident_id]
+    producer: argos-smartops
+    consumers: [argos-rule-engineering, argos-knowledge]
+    retention_days: 365
+
+  - name: argos.rule.feedback.v1
+    description: "Efectividad real de una regla desplegada (FP rate, alertas/día observadas) -- solo tras despliegue real, hoy BLOCKED_EXTERNAL"
+    partition_key: [incident_id]
+    producer: argos-rule-engineering
+    consumers: [argos-knowledge]
+    retention_days: 365
+
+  - name: argos.dlq.v1
+    description: "Dead-letter queue común -- cualquier mensaje que un consumidor no pudo procesar tras los reintentos configurados"
+    partition_key: [correlation_key]
+    producer: "*"
+    consumers: [argos-observability]
+    retention_days: 90

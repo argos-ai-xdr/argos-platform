@@ -1,0 +1,45 @@
+# Deny-by-default para argos-kafka (mismo principio que
+# kubernetes/network-policies/default-deny.yaml). Egress/ingress
+# explícito solo con los namespaces productor/consumidor reales de
+# ADR-069: argos-xdr (Wazuh, productor), argos-ai (Investigator/
+# rule_engineering, consumidor+productor), argos-smartops (SOC,
+# consumidor+productor), argos-observability (DLQ).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: argos-kafka
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-detection-engineering-plane
+  namespace: argos-kafka
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: kafka
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: argos-xdr
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: argos-ai
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: argos-smartops
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: argos-observability
+      ports:
+        - protocol: TCP
+          port: 9093  # Kafka TLS listener -- puerto sin fijar definitivamente, ver README.md
