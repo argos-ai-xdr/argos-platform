@@ -1,0 +1,34 @@
+# Limita lo que el chaos-controller-manager (ServiceAccount en
+# argos-chaos-engine, ver ../namespaces/argos-chaos-engine.yaml) puede
+# tocar: SOLO recursos de argos-cyber-range, vía un Role EN ese
+# namespace (no un ClusterRole) -- deny-by-default para cualquier otro
+# namespace real del clúster. ADR-068.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: chaos-mesh-target-scope
+  namespace: argos-cyber-range
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/exec"]
+    verbs: ["get", "list", "watch", "patch", "delete"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets", "daemonsets"]
+    verbs: ["get", "list", "watch", "patch"]
+  - apiGroups: ["chaos-mesh.org"]
+    resources: ["podchaos", "networkchaos", "dnschaos", "httpchaos", "workflows"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: chaos-mesh-target-scope-binding
+  namespace: argos-cyber-range
+subjects:
+  - kind: ServiceAccount
+    name: chaos-controller-manager
+    namespace: argos-chaos-engine
+roleRef:
+  kind: Role
+  name: chaos-mesh-target-scope
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,45 @@
+# Deny-by-default para argos-chaos-engine (mismo principio que
+# kubernetes/network-policies/default-deny.yaml, aplicado aquí de forma
+# explícita porque este namespace es nuevo y de alto riesgo -- el
+# chaos-controller-manager tiene, por diseño, permiso para provocar
+# fallos en argos-cyber-range). Egress explícito solo a: API server
+# (para aplicar/observar Chaos Mesh CRDs) y argos-cyber-range (su único
+# target legítimo, ver ../rbac/chaos-target-scope.yaml). ADR-068.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: argos-chaos-engine
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-to-kube-api-and-cyber-range
+  namespace: argos-chaos-engine
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: chaos-mesh
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: argos-cyber-range
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 443  # API server -- restringir a la IP real del control plane en el overlay del entorno
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53

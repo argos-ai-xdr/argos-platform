@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argos-chaos-engine
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+    argos.io/plane: validation
+    argos.io/isolation: high
+  annotations:
+    argos.io/description: >-
+      chaos-controller-manager/dashboard de Chaos Mesh (ADR-068). Nunca
+      corre en argos-cyber-range -- separa "quién inyecta el fallo" de
+      "dónde se inyecta". Su alcance real hacia argos-cyber-range se
+      limita por RBAC (../rbac/chaos-target-scope.yaml), no por
+      ubicación de namespace. Algunos tipos de fault (NetworkChaos,
+      IOChaos) requieren capacidades elevadas en los pods INYECTADOS
+      dentro de argos-cyber-range (sidecar chaos-daemon) -- eso no
+      relaja pod-security.kubernetes.io de este namespace, que aloja
+      solo el controller/dashboard.

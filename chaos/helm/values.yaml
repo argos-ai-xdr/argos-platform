@@ -1,0 +1,32 @@
+# Values para el chart oficial de Chaos Mesh
+# (repo: https://charts.chaos-mesh.org, chart: chaos-mesh).
+# Instalado por separado del chart paraguas ../../helm/argos-services
+# (mismo patrón que platform/wazuh: chart oficial multi-componente).
+# ADR-068. TODO (ARG-031): fijar `version`/digest real antes de
+# `helm dependency update` -- ningún valor aquí se ha aplicado contra un
+# clúster real todavía.
+
+chaosDaemon:
+  runtime: containerd
+  # Requiere privilegios elevados en argos-cyber-range para algunos tipos
+  # de fault (NetworkChaos, IOChaos) -- documentado explícitamente, no
+  # asumido: no se relaja pod-security de argos-chaos-engine por esto,
+  # es un caso aparte que corre DENTRO de argos-cyber-range (ver
+  # ../namespaces/argos-chaos-engine.yaml).
+
+controllerManager:
+  serviceAccount: chaos-controller-manager
+  # Sin acceso cluster-wide por defecto del chart -- el alcance real
+  # hacia argos-cyber-range lo impone ../rbac/chaos-target-scope.yaml,
+  # no un value de este chart (Chaos Mesh no tiene un "target namespace"
+  # nativo, ver README.md de este directorio).
+
+dashboard:
+  create: true
+  securityMode: true  # RBAC del propio dashboard -- nunca acceso anónimo
+
+# ChaosSafetyGuard (argos-validation/chaos) NO es un componente de Chaos
+# Mesh -- ningún experimento debería aplicarse sin pasar antes por ese
+# gate. Este chart, por sí solo, no lo impone; es responsabilidad del
+# orquestador que invoque a Chaos Mesh (todavía no existe uno real,
+# BLOCKED_EXTERNAL).
